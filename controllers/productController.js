@@ -55,7 +55,9 @@ async function updateProduct(req, res, id) {
     if (!product) {
       res.writeHead(404, { "Content-Type": "application/json" });
       res.end(
-        JSON.stringify({ msg: `No product with the id ${id} to be updated` })
+        JSON.stringify({
+          message: `No product with the id ${id} to be updated`,
+        })
       );
     } else {
       const body = await getPostData(req);
@@ -78,9 +80,29 @@ async function updateProduct(req, res, id) {
   }
 }
 
+async function deleteProduct(req, res, id) {
+  try {
+    const product = await Product.findById(id);
+
+    if (!product) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({ message: `No product with the id of ${id} found` })
+      );
+    } else {
+      await Product.remove(id);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: `Product ${id} removed` }));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
+  deleteProduct,
 };
